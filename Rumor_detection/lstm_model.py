@@ -56,5 +56,5 @@ class LSTM_Attention():
                       metrics=['sparse_categorical_accuracy'])
         return lstm_model
 
-
-#compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
+# 踩坑：两个loss函数sparse_categorical_crossentropy和categorical_crossentropy。使用后者会出现莫名bug
+# compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
