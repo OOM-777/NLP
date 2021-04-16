@@ -1,5 +1,9 @@
 import pandas as pd
 import joblib
+import lstm_model
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -11,7 +15,8 @@ from config import *
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-from sklearn.linear_model import LogisticRegression
+enc = preprocessing.OneHotEncoder()
+
 
 TRAIN_PATH = './data/train.csv'
 TEST_PATH = './data/test.csv'
@@ -194,21 +199,50 @@ def SVM(X_TRAIN, Y_TRAIN, X_TEST, Y_TEST):
 
 train = pd.read_csv(TRAIN_PATH)
 test = pd.read_csv(TEST_PATH)
-
+# 构造机器学习分类器训练测试集
 x_train = train.iloc[:, :40]
 y_train = train.iloc[:, [40]]
 
 x_test = test.iloc[:, :40]
 y_test = test.iloc[:, [40]]
-print(x_train.head())
-print(y_train.head())
 
-KNN(x_train, y_train, x_test, y_test)
-#
-decision_tree(x_train, y_train, x_test, y_test)
-#
-bayers(x_train, y_train, x_test, y_test)
-#
-SVM(x_train, y_train, x_test, y_test)
-#
-random_forest(x_train, y_train, x_test, y_test)
+# 构造深度学习分类器训练测试集
+l_x_train = np.array(x_train)
+l_x_train = l_x_train.reshape(2370, 1, 40)
+
+l_x_test = np.array(x_test)
+l_x_test = l_x_test.reshape(1017, 1, 40)
+
+
+l_x_train, l_x_val, y_train, y_val = train_test_split(l_x_train, y_train, test_size=0.2, random_state=19)
+
+
+Model=lstm_model.LSTM_Attention()
+model=Model.make_model(l_x_train)
+model.fit(l_x_train,y_train,epochs=300,batch_size=32,validation_data=(l_x_val, y_val))
+model.save('./model/new_cnn.h5')
+pre = model.predict(l_x_test)
+
+y_pre = []
+for i in range(len(pre)):
+    temp = list(pre[i])
+    temp = temp.index(max(temp))
+    y_pre.append(temp)
+
+precision = precision_score(y_test, y_pre)
+recall = recall_score(y_test, y_pre)
+f1 = f1_score(y_test, y_pre)
+print('精确率为：%0.5f' % precision)
+print('召回率：%0.5f' % recall)
+print('F1均值为：%0.5f' % f1)
+
+# KNN(x_train, y_train, x_test, y_test)
+# #
+# decision_tree(x_train, y_train, x_test, y_test)
+# #
+# bayers(x_train, y_train, x_test, y_test)
+# #
+# SVM(x_train, y_train, x_test, y_test)
+# #
+# random_forest(x_train, y_train, x_test, y_test)
+
