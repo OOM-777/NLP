@@ -9,7 +9,8 @@
     模型见Rumor_detection/model
 ## 建模训练
     使用常见的机器学习模型，学习效果如下：
-    ![image](https://github.com/OOM-777/NLP/blob/master/Rumor_detection/picture/knn.png)
+    ![Alt text](https://github.com/OOM-777/NLP/blob/master/Rumor_detection/picture/knn.png)
+
     详见Rumor_detection/pirture
     
 ## 集成学习
