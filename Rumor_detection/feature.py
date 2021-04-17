@@ -14,8 +14,8 @@ df.dropna(axis=0, how='any', inplace=True)  # 按行删除空缺行
 print(df)
 
 # 划分训练集和测试集
-x_train, x_test, y_train, y_test = train_test_split(df[['after_jieba']], df['label'], test_size=0.3,
-                                                    random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(df[['after_jieba']], df['label'], test_size=0.2,
+                                                    random_state=19)
 print("训练数据集大小：%d" % x_train.shape[0])
 print("测试集数据大小：%d" % x_test.shape[0])
 
@@ -28,7 +28,7 @@ y_test = pd.DataFrame(y_test)
 y_train = y_train.reset_index(drop=True)
 y_test = y_test.reset_index(drop=True)
 
-# 取出邮件内容部分
+
 x_train = list(x_train['after_jieba'].astype('str'))
 print("====================================处理前的数据====================================")
 #print(x_train[199])
@@ -53,7 +53,7 @@ with open(TF_IDF_PATH, 'wb') as fw:
     pickle.dump(tfidftransformer, fw)
 
 # SVD降维
-# 多次实验得到降至20维效果最好
+# 多次实验得到降至40维效果最好
 svd = TruncatedSVD(n_components=40)
 svd_model = svd.fit(tfidf)
 

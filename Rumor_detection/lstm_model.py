@@ -18,14 +18,14 @@ class LSTM_Attention():
 
     '''
     def __init__(self):
-        self.LR_RATE=0.001
-        self.DROPOUT=0.4
+        self.LR_RATE = 0.005
+        self.DROPOUT = 0.4
         self.LSTM_UNITS=64
         self.IS_Con1D=1
         self.CLASS_NUM=2
         #self.X_TRAIN
-        self.KERNEL_SIZE=1
-        self.FILTERS=19
+        self.KERNEL_SIZE = 1
+        self.FILTERS = 32
     def make_model(self,X_TRAIN):
         INPUTS=tf.keras.Input(shape=(len(X_TRAIN[0]),len(X_TRAIN[0][0])))
 
@@ -35,7 +35,7 @@ class LSTM_Attention():
             Conv_out=tf.keras.layers.Conv2D(filters=self.FILTERS,kernel_size=self.KERNEL_SIZE)(INPUTS)
 
         LSTM_out = Bidirectional(LSTM(self.LSTM_UNITS, return_sequences=True))(Conv_out)
-        LSTM_out = Dropout(0.3)(LSTM_out)
+        LSTM_out = Dropout(0.4)(LSTM_out)
 
         # 自定义attention
 
@@ -52,8 +52,8 @@ class LSTM_Attention():
         lstm_model=tf.keras.Model(inputs=INPUTS,outputs=Dense_out)
 
         lstm_model.compile(optimizer=tf.optimizers.RMSprop(learning_rate=self.LR_RATE),
-                      loss='sparse_categorical_crossentropy',
-                      metrics=['sparse_categorical_accuracy'])
+                           loss='sparse_categorical_crossentropy',
+                           metrics=['accuracy'])
         return lstm_model
 
 # 踩坑：两个loss函数sparse_categorical_crossentropy和categorical_crossentropy。使用后者会出现莫名bug
